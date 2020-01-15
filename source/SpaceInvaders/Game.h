@@ -26,6 +26,8 @@ private:
 	void ProcessInput();
 	void Draw();
 
+	void Shoot();
+
 	SDL_Window* window;
 	int screenWidth;
 	int screenHeight;

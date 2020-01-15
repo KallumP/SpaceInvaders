@@ -26,8 +26,7 @@ Game::Game() {
 	screenHeight = 400;
 
 	//creates the ship object
-	player = Ship(screenWidth / 2, screenHeight);
-
+	player = Ship(screenHeight);
 
 	gameState = GameState::PLAY;
 }
@@ -80,6 +79,7 @@ void Game::GameLoop() {
 	//checks to see if the game is still running
 	while (gameState == GameState::PLAY) {
 
+		Tick();
 		ProcessInput();
 		Draw();
 	}
@@ -139,7 +139,7 @@ void Game::ProcessInput() {
 				case SDLK_SPACE:
 
 				//causes the player to shoot
-				player.Shoot();
+				Shoot();
 				break;
 			}
 			break;
@@ -160,6 +160,10 @@ void Game::Draw() {
 	//draws out the player
 	player.Draw(screenWidth, screenHeight);
 
+	//loops through each of the projectiles and ticks them
+	for (size_t i = 0; i < playerProjectiles.size(); i++)
+
+		playerProjectiles[i].Draw(screenWidth, screenHeight);
 
 	//swaps the buffer screen
 	SDL_GL_SwapWindow(window);
@@ -169,4 +173,11 @@ void Game::Draw() {
 void Game::AddProjectile(int _x, int _y, Direction _dir){
 
 
+}
+
+//shoots a projectile from the ship
+void Game::Shoot() {
+
+	//adds a projectile to the end of the list
+	playerProjectiles.push_back(Projectile(player.x, player.y, Direction::Up));
 }

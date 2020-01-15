@@ -1,0 +1,6 @@
+gameloop runs on a while loop. To set it to 60fps, check to see if 16ms has passed since the last tick, and then to do the tick
+use a TimeSinceLastTick, and only update it if enough time went by
+
+constrain the player to the sides of the map
+
+make it so that the player moves instantly when the movement buttons are held down "mouse down" boolean
