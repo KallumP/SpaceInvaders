@@ -1,3 +1,4 @@
-constrain the player to the sides of the map
-
 make it so that the player moves instantly when the movement buttons are held down "mouse down" boolean
+
+cap the fire rate
+

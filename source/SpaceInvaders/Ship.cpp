@@ -34,7 +34,7 @@ void Ship::Tick() {
 
 //lets the ship move
 void Ship::Move(int moveAmount) {
-	
+
 	//adds the parameter onto the ship's x coordinate
 	x += moveAmount;
 }
@@ -51,8 +51,24 @@ void Ship::Draw(int screenWidth, int screenHeight) {
 	glColor3f(1.0f, 0.0f, 0.0f);
 
 	glVertex2f(glX, glY + glHeight);
-	glVertex2f(glX - glWidth/2, glY);
-	glVertex2f(glX + glWidth/2, glY);
+	glVertex2f(glX - glWidth / 2, glY);
+	glVertex2f(glX + glWidth / 2, glY);
 
 	glEnd();
+}
+
+//returns whether the ship will go outside the screen's bounds after the movement
+bool Ship::WithinBounds(int screenWidth, int moveAmount) {
+
+	//keeps track of what x will be after the movement
+	int nextX = x + moveAmount;
+
+	//checks to see if the player was outside the screen 
+	if ((nextX - width / 2) < -screenWidth / 2 || (nextX + width / 2) > screenWidth / 2)
+		
+		//returns that the ship will not be within the screen bounds after the movement
+		return false;
+
+	//returns that the ship will be within the screen bounds after the movement
+	return true;
 }

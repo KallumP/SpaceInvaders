@@ -16,7 +16,7 @@ public:
 	~Game();
 
 	void Run();
-	void AddProjectile(int _x, int _y, Direction _dir);
+	
 
 
 private:
@@ -26,7 +26,10 @@ private:
 	void ProcessInput();
 	void Draw();
 
+	void MoveShip(int moveAmount);
 	void Shoot();
+
+	void AddProjectile(int _x, int _y, Direction _dir);
 
 	SDL_Window* window;
 	int screenWidth;
@@ -35,5 +38,8 @@ private:
 
 	Ship player;
 	std::vector<Projectile> playerProjectiles;
+
+	bool leftDown;
+	bool rightDown;
 };
 

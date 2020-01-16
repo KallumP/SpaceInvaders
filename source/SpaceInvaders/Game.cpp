@@ -139,14 +139,14 @@ void Game::ProcessInput() {
 				case SDLK_LEFT:
 
 				//moves the player to the leftwards
-				player.Move(-5);
+				MoveShip(-5);
 				break;
 
 				//checks for a right arrow press
 				case SDLK_RIGHT:
 
 				//moves the player righwards
-				player.Move(5);
+				MoveShip(5);
 				break;
 
 				//checks to see if the space bar was pressed
@@ -186,6 +186,18 @@ void Game::Draw() {
 //adds a new projectile into the game
 void Game::AddProjectile(int _x, int _y, Direction _dir){
 
+
+}
+
+//deals with player input to move the ship
+void Game::MoveShip(int moveAmount) {
+	
+	//checks to see if the player was within the bounds
+	if (player.WithinBounds(screenWidth, moveAmount)) {
+
+		player.Move(moveAmount);
+
+	}
 
 }
 
