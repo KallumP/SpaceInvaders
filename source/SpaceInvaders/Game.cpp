@@ -76,12 +76,26 @@ void Game::InitSystems() {
 //game loop
 void Game::GameLoop() {
 
+	const int frequency = 60;
+	const int period = 1000 / 60;
+
+	Uint32 frameStartTime;
+
 	//checks to see if the game is still running
 	while (gameState == GameState::PLAY) {
+
+		//saves the amount of milliseconds since the start of the program
+		frameStartTime = SDL_GetTicks();
 
 		Tick();
 		ProcessInput();
 		Draw();
+
+		//checks to see if this tick too less milliseconds than a frame should take
+		if (period > (SDL_GetTicks() - frameStartTime))
+
+			//delays the tick to keep a constant fps
+			SDL_Delay(period - (SDL_GetTicks() - frameStartTime));
 	}
 }
 
