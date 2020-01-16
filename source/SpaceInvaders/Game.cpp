@@ -87,8 +87,8 @@ void Game::GameLoop() {
 		//saves the amount of milliseconds since the start of the program
 		frameStartTime = SDL_GetTicks();
 
-		Tick();
 		ProcessInput();
+		Tick();
 		Draw();
 
 		//checks to see if this tick too less milliseconds than a frame should take
@@ -102,9 +102,8 @@ void Game::GameLoop() {
 //tick sequence
 void Game::Tick() {
 
-	//ticks the player
-	player.Tick();
-	
+	MoveShip();
+
 	//loops through each of the projectiles and ticks them
 	for (size_t i = 0; i < playerProjectiles.size(); i++)
 
@@ -119,6 +118,7 @@ void Game::ProcessInput() {
 	//checks to see if there was an event
 	while (SDL_PollEvent(&e)) {
 
+		//checks to see what sort of event
 		switch (e.type) {
 
 			//checks to see if the cross was clicked
@@ -129,24 +129,23 @@ void Game::ProcessInput() {
 
 			break;
 
+
 			//checks to see if any key was pressed down
 			case SDL_KEYDOWN:
 
-			//checks what key was pressed
+			//checks what key was pressed down
 			switch (e.key.keysym.sym) {
 
 				//checks for a left arrow press
 				case SDLK_LEFT:
 
-				//moves the player to the leftwards
-				MoveShip(-5);
+				leftDown = true;
 				break;
 
 				//checks for a right arrow press
 				case SDLK_RIGHT:
 
-				//moves the player righwards
-				MoveShip(5);
+				rightDown = true;
 				break;
 
 				//checks to see if the space bar was pressed
@@ -157,6 +156,33 @@ void Game::ProcessInput() {
 				break;
 			}
 			break;
+
+			//checks to see if any key was let go of
+			case SDL_KEYUP:
+
+			//checks what key was let go of
+			switch (e.key.keysym.sym) {
+
+				//left arrow key
+				case SDLK_LEFT:
+
+				leftDown = false;
+				break;
+
+				//right arrow key
+				case SDLK_RIGHT:
+
+
+				rightDown = false;
+				break;
+
+				//space bar
+				case SDLK_SPACE:
+
+				//causes the player to shoot
+				Shoot();
+				break;
+			}
 		}
 	}
 }
@@ -184,21 +210,30 @@ void Game::Draw() {
 }
 
 //adds a new projectile into the game
-void Game::AddProjectile(int _x, int _y, Direction _dir){
+void Game::AddProjectile(int _x, int _y, Direction _dir) {
 
 
 }
 
 //deals with player input to move the ship
-void Game::MoveShip(int moveAmount) {
-	
-	//checks to see if the player was within the bounds
-	if (player.WithinBounds(screenWidth, moveAmount)) {
+void Game::MoveShip() {
 
+	//variable used to determin how much to move the player by
+	int moveAmount = 0;
+
+	//checks to see if the left key was pressed
+	if (leftDown)
+		moveAmount -= 5;
+
+	//checks to see if the right key was pressed
+	if (rightDown)
+		moveAmount += 5;
+
+	//checks to see if the player was within the bounds and if the player should be moved
+	if (player.WithinBounds(screenWidth, moveAmount) && moveAmount != 0)
+
+		//moves the player
 		player.Move(moveAmount);
-
-	}
-
 }
 
 //shoots a projectile from the ship

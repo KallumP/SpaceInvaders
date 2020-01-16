@@ -26,7 +26,7 @@ private:
 	void ProcessInput();
 	void Draw();
 
-	void MoveShip(int moveAmount);
+	void MoveShip();
 	void Shoot();
 
 	void AddProjectile(int _x, int _y, Direction _dir);
