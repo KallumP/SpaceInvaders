@@ -12,7 +12,6 @@ public:
 
 	bool WithinBounds(int screenWidth, int moveAmount);
 	void Move(int moveAmount);
-	void Tick();
 	void Draw(int width, int height);
 
 	int x;

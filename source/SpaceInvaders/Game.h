@@ -1,13 +1,12 @@
 #pragma once
 #include "Ship.h"
 #include "Projectile.h"
+#include "Enemy.h"
 
 #include <iostream>
 #include <vector>
 #include <sdl/SDL.h>
 #include <gl/glew.h>
-
-enum class GameState { PLAY, EXIT };
 
 class Game {
 
@@ -16,8 +15,6 @@ public:
 	~Game();
 
 	void Run();
-	
-
 
 private:
 	void InitSystems();
@@ -26,18 +23,21 @@ private:
 	void ProcessInput();
 	void Draw();
 
-	void MoveShip();
 	void Shoot();
+	void AddProjectile(int _x, int _y, ProjDirection _dir);
+	void MoveShip();
+	void MoveProjectiles();
+	void ChangeEnemyDirection();
 
-	void AddProjectile(int _x, int _y, Direction _dir);
 
 	SDL_Window* window;
 	int screenWidth;
 	int screenHeight;
-	GameState gameState;
+	bool running;
 
 	Ship player;
 	std::vector<Projectile> playerProjectiles;
+	std::vector<Enemy> enemies;
 
 	bool leftDown;
 	bool rightDown;

@@ -28,7 +28,7 @@ Game::Game() {
 	//creates the ship object
 	player = Ship(screenHeight);
 
-	gameState = GameState::PLAY;
+	running = true;;
 }
 
 //destructor
@@ -82,7 +82,7 @@ void Game::GameLoop() {
 	Uint32 frameStartTime;
 
 	//checks to see if the game is still running
-	while (gameState == GameState::PLAY) {
+	while (running) {
 
 		//saves the amount of milliseconds since the start of the program
 		frameStartTime = SDL_GetTicks();
@@ -102,12 +102,10 @@ void Game::GameLoop() {
 //tick sequence
 void Game::Tick() {
 
+	//moves the ship
 	MoveShip();
 
-	//loops through each of the projectiles and ticks them
-	for (size_t i = 0; i < playerProjectiles.size(); i++)
-
-		playerProjectiles[i].Tick();
+	MoveProjectiles();
 }
 
 //gets inputs from the user
@@ -125,7 +123,7 @@ void Game::ProcessInput() {
 			case SDL_QUIT:
 
 			//sets the game state to exit
-			gameState = GameState::EXIT;
+			running = false;
 
 			break;
 
@@ -209,8 +207,18 @@ void Game::Draw() {
 	SDL_GL_SwapWindow(window);
 }
 
+//shoots a projectile from the ship
+void Game::Shoot() {
+
+	//checks to see if therew as less than 5 projectiles
+	if (playerProjectiles.size() < 5)
+
+		//adds a projectile to the end of the list
+		playerProjectiles.push_back(Projectile(player.x, player.y, ProjDirection::Up));
+}
+
 //adds a new projectile into the game
-void Game::AddProjectile(int _x, int _y, Direction _dir) {
+void Game::AddProjectile(int _x, int _y, ProjDirection _dir) {
 
 
 }
@@ -236,9 +244,25 @@ void Game::MoveShip() {
 		player.Move(moveAmount);
 }
 
-//shoots a projectile from the ship
-void Game::Shoot() {
+//moves all the projectiles
+void Game::MoveProjectiles() {
 
-	//adds a projectile to the end of the list
-	playerProjectiles.push_back(Projectile(player.x, player.y, Direction::Up));
+	//loops through each of the projectiles and ticks them
+	for (size_t i = 0; i < playerProjectiles.size(); i++)
+
+		//checks to see if the projectile can move again
+		if (playerProjectiles[i].WithinBounds(screenHeight))
+
+			//moves the projectile
+			playerProjectiles[i].Move();
+
+		else if (!playerProjectiles[i].WithinBounds(screenHeight))
+
+			//removes the projectile
+			playerProjectiles.erase(playerProjectiles.begin() + i);
+}
+
+void Game::ChangeEnemyDirection() {
+
+
 }

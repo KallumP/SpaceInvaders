@@ -27,11 +27,6 @@ void Ship::Setup(int _x, int _y) {
 	height = 40;
 }
 
-//passes time in the ship
-void Ship::Tick() {
-
-}
-
 //lets the ship move
 void Ship::Move(int moveAmount) {
 

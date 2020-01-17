@@ -1,6 +1,6 @@
 #pragma once
 
-enum class Direction { Up, Down };
+enum class ProjDirection { Up, Down };
 
 class Projectile
 {
@@ -8,18 +8,19 @@ class Projectile
 public:
 
 	Projectile();
-	Projectile(int _x, int _y, Direction _dir);
+	Projectile(int _x, int _y, ProjDirection _dir);
 	~Projectile();
-	
-	void Tick();
+
+	bool WithinBounds(int screenHeight);
 	void Move();
 	void Draw(int width, int height);
 
 private:
 
-	void Setup(int _x, int _y, Direction _dir);
+	void Setup(int _x, int _y, ProjDirection _dir);
 
-	Direction dir;
+	ProjDirection dir;
+	int speed;
 
 	int x;
 	int y;

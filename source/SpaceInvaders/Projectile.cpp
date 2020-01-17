@@ -8,7 +8,7 @@ Projectile::Projectile() {
 
 }
 
-Projectile::Projectile(int _x, int _y, Direction _dir) {
+Projectile::Projectile(int _x, int _y, ProjDirection _dir) {
 
 	Setup(_x, _y, _dir);
 }
@@ -18,26 +18,35 @@ Projectile::~Projectile() {
 
 }
 
-void Projectile::Setup(int _x, int _y, Direction _dir) {
+void Projectile::Setup(int _x, int _y, ProjDirection _dir) {
 	x = _x;
 	y = _y;
 	dir = _dir;
 	size = 10;
+	speed = 2;
 }
 
-//passes time in the projectile
-void Projectile::Tick() {
+//returns whether the projectile will be within the screen bounds after the movement
+bool Projectile::WithinBounds(int screenHeight) {
 
-	Move();
+	//checks to see if the next movement would cause the projectile to leave the screen
+	if (y + speed - size / 2 > screenHeight / 2)
+
+		//returns that the projectile will be outside the screen bounds after the next movement
+		return false;
+
+	//returns that the projectile will be within the screen bounds after the next movement
+	return true;
 }
 
 //moves the projectile
 void Projectile::Move() {
 
-	if (dir == Direction::Up)
-		y++;
-	else if (dir == Direction::Down)
-		y--;
+	//checks which direction to move the projectile in before moving it
+	if (dir == ProjDirection::Up)
+		y += speed;
+	else if (dir == ProjDirection::Down)
+		y -= speed;
 }
 
 //draws the projectile
