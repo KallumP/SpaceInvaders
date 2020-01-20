@@ -119,23 +119,6 @@ void Game::GameLoop() {
 	}
 }
 
-//tick sequence
-void Game::Tick() {
-
-	//moves the ship
-	MoveShip();
-
-	//moves the projectiles
-	MoveProjectiles();
-
-	//moves the enemies
-	MoveEnemies();
-
-	//checks collision
-	CheckCollision();
-
-}
-
 //gets inputs from the user
 void Game::ProcessInput() {
 
@@ -162,23 +145,29 @@ void Game::ProcessInput() {
 			//checks what key was pressed down
 			switch (e.key.keysym.sym) {
 
-				//checks for a left arrow press
+				//left arrow key
 				case SDLK_LEFT:
-
 				leftDown = true;
 				break;
 
-				//checks for a right arrow press
+				//right arrow key
 				case SDLK_RIGHT:
-
 				rightDown = true;
 				break;
 
-				//checks to see if the space bar was pressed
-				case SDLK_SPACE:
+				//a key
+				case SDLK_a:
+				aDown = true;
+				break;
 
-				//causes the player to shoot
-				Shoot();
+				//d key
+				case SDLK_d:
+				dDown = true;
+				break;
+
+				//space bar
+				case SDLK_SPACE:
+				spaceDown = true;
 				break;
 			}
 			break;
@@ -191,19 +180,45 @@ void Game::ProcessInput() {
 
 				//left arrow key
 				case SDLK_LEFT:
-
 				leftDown = false;
 				break;
 
 				//right arrow key
 				case SDLK_RIGHT:
-
-
 				rightDown = false;
+				break;
+
+				//a key
+				case SDLK_a:
+				aDown = false;
+				break;
+
+				//d key
+				case SDLK_d:
+				dDown = false;
+				break;
+
+				//space bar
+				case SDLK_SPACE:
+				spaceDown = false;
 				break;
 			}
 		}
 	}
+}
+
+//tick sequence
+void Game::Tick() {
+
+	MoveShip();
+
+	Shoot();
+
+	MoveProjectiles();
+
+	MoveEnemies();
+
+	CheckCollision();
 }
 
 //draws the game
@@ -236,11 +251,20 @@ void Game::Draw() {
 //shoots a projectile from the ship
 void Game::Shoot() {
 
-	//checks to see if therew as less than 5 projectiles
-	if (playerProjectiles.size() < 400)
+	//checks to see if the space bar was pressed
+	if (spaceDown)
 
-		//adds a projectile to the end of the list
-		playerProjectiles.push_back(Projectile(player.x, player.y, ProjDirection::Up));
+		//checks to see if enough time has passed
+		if (fireRateCap < SDL_GetTicks() - reloadTime)
+
+			//checks to see if therew as less than 20 projectiles
+			if (playerProjectiles.size() < 20) {
+
+				//adds a projectile to the end of the list
+				playerProjectiles.push_back(Projectile(player.x, player.y, ProjDirection::Up));
+
+				reloadTime = SDL_GetTicks();
+			}
 }
 
 //adds a new projectile into the game
@@ -256,11 +280,11 @@ void Game::MoveShip() {
 	int moveAmount = 0;
 
 	//checks to see if the left key was pressed
-	if (leftDown)
+	if (leftDown || aDown)
 		moveAmount -= shipSpeed;
 
 	//checks to see if the right key was pressed
-	if (rightDown)
+	if (rightDown || dDown)
 		moveAmount += shipSpeed;
 
 	//checks to see if the player was within the bounds and if the player should be moved
@@ -294,18 +318,29 @@ void Game::CheckChangeEnemyDirection() {
 	bool change = false;
 
 	//loops through all the enemies
-	for (size_t i = 0; i < enemies.size(); i++)
+	for (size_t i = 0; i < enemies.size(); i++) {
 
 		//checks if the current enemy is outside the screen bounds
-		if (!enemies[i].WithinBounds(screenWidth, enemySpeed))
+		if (!enemies[i].WithinBounds(screenWidth, enemySpeed)) {
 
+			//records that a diection change was neccessary
 			change = true;
 
+			cout << "Change registered" << endl;
 
+			//stops searching
+			break;
+		}
+	}
+
+
+	//checks to see if a change was found
 	if (change)
 
+		//loops through the enemies
 		for (size_t i = 0; i < enemies.size(); i++)
 
+			//changes the direction
 			enemies[i].ChangeDirection();
 }
 
@@ -326,45 +361,27 @@ void Game::MoveEnemies() {
 void Game::CheckCollision() {
 
 	//checks to see if there were any projectiles
-	if (playerProjectiles.size() != 0) {
+	if (playerProjectiles.size() != 0)
 
 		//loops through all the projectiles
-		for (size_t i = playerProjectiles.size() - 1; i >= 0; i--)
-		{
+		for (int i = playerProjectiles.size() - 1; i >= 0; i--)
 
-			//checks to see if the projectile for loop went wrong
-			if (i > playerProjectiles.size() - 1) {
+			//loops through all the enemies
+			for (int j = enemies.size() - 1; j >= 0; j--)
 
-				cout << "Projectile for loop went wrong i = " << i << endl;
-				break;
-			}
-			else {
+				//makes sure that there were projectiles to look at
+				if (playerProjectiles.size() > i)
 
-				//loops through all the enemies
-				for (size_t j = enemies.size() - 1; j >= 0; j--)
-				{
+					//checks for a collision
+					if (playerProjectiles[i].Collided(enemies[j].GetX(), enemies[j].GetY(), enemies[j].GetSize())) {
 
-					//checks to see if the for loop went wrong
-					if (j > enemies.size() - 1)
-					{
-						cout << "Enemy for loop went wrong j = " << j << endl;
-						//breaks out of the for loop
-						break;
+						//removes the collided enemy
+						enemies.erase(enemies.begin() + j);
+
+						//removes the collided projectile
+						playerProjectiles.erase(playerProjectiles.begin() + i);
+
+
+						//enemySpeed++;
 					}
-					else {
-
-						//checks for a collision
-						if (playerProjectiles[i].Collided(enemies[j].GetX(), enemies[j].GetY(), enemies[j].GetSize())) {
-
-							//removes the collided enemy
-							enemies.erase(enemies.begin() + j);
-
-							//removes the collided projectile
-							playerProjectiles.erase(playerProjectiles.begin() + i);
-						}
-					}
-				}
-			}
-		}
-	}
 }

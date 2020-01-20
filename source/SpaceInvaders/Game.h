@@ -45,8 +45,14 @@ private:
 
 	int shipSpeed = 5;
 	bool leftDown;
+	bool aDown;
 	bool rightDown;
+	bool dDown;
+	bool spaceDown;
 
 	int enemySpeed = 1;
+
+	int fireRateCap = 200;
+	Uint32 reloadTime;
 };
 

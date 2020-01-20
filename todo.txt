@@ -1,1 +1,5 @@
-cap the fire rate using timers
+make enemies speed up only under cetain cicrumstances
+
+score
+
+enemies should be able to shoot

@@ -48,6 +48,8 @@ void  Enemy::ChangeDirection() {
 	else
 
 		dir = EnemDirection::Left;
+
+	y--;
 }
 
 void Enemy::Move(int moveAmount) {

@@ -28,7 +28,7 @@ private:
 	int x;
 	int y;
 	int speed;
-	int size= 10;
+	int size = 20;
 
 };
 
