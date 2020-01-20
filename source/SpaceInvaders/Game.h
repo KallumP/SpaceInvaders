@@ -18,16 +18,20 @@ public:
 
 private:
 	void InitSystems();
+	void SetupEnemies();
 	void GameLoop();
 	void Tick();
 	void ProcessInput();
 	void Draw();
 
+
 	void Shoot();
 	void AddProjectile(int _x, int _y, ProjDirection _dir);
 	void MoveShip();
 	void MoveProjectiles();
-	void ChangeEnemyDirection();
+	void CheckChangeEnemyDirection();
+	void MoveEnemies();
+	void CheckCollision();
 
 
 	SDL_Window* window;
@@ -39,7 +43,10 @@ private:
 	std::vector<Projectile> playerProjectiles;
 	std::vector<Enemy> enemies;
 
+	int shipSpeed = 5;
 	bool leftDown;
 	bool rightDown;
+
+	int enemySpeed = 1;
 };
 

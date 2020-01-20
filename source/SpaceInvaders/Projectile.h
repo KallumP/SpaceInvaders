@@ -14,6 +14,7 @@ public:
 	bool WithinBounds(int screenHeight);
 	void Move();
 	void Draw(int width, int height);
+	bool Collided(int _x, int _y, int _size);
 
 private:
 

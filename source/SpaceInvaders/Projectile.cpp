@@ -22,7 +22,7 @@ void Projectile::Setup(int _x, int _y, ProjDirection _dir) {
 	x = _x;
 	y = _y;
 	dir = _dir;
-	size = 10;
+	size = 5;
 	speed = 2;
 }
 
@@ -54,7 +54,7 @@ void Projectile::Draw(int screenWidth, int screenHeight) {
 
 	float glX = OGLFunctions::CoordinateFixer(x, screenWidth);
 	float glY = OGLFunctions::CoordinateFixer(y, screenHeight);
-	float glSize = OGLFunctions::CoordinateFixer(size, screenWidth);
+	float glSize = OGLFunctions::CoordinateFixer(size / 2, screenWidth);
 
 	glBegin(GL_TRIANGLES);
 	glColor3f(1.0f, 0.0f, 0.0f);
@@ -82,4 +82,20 @@ void Projectile::Draw(int screenWidth, int screenHeight) {
 	//	float glY = OGLFunctions::CoordinateFixer(size / 2 * sin(baseAngle), screenHeight);
 	//	glVertex2f(glX, glY);
 	//}
+}
+
+//returns if the projectile collided
+bool Projectile::Collided(int _x, int _y, int _size) {
+
+	//checks for a collision with the given parameters
+	if (x - size / 2 < _x + _size / 2 &&
+		x + size / 2 > _x - _size / 2 &&
+		y - size / 2 < _y + _size / 2 &&
+		y + size / 2 > _y - _size / 2)
+
+		return true;
+
+	
+
+	return false;
 }

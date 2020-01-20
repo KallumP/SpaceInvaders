@@ -9,10 +9,15 @@ public:
 	Enemy(int _x, int _y);
 	~Enemy();
 
-	bool CheckChangeDirection();
+	bool WithinBounds(int screenWidth, int moveAmount);
 	void ChangeDirection();
-	void Move();
+	void Move(int moveAmount);
+	void Draw(int screenWidth, int screenHeight);
 
+	int GetX();
+	int GetY();
+	int GetSize();
+	
 
 private:
 
@@ -22,8 +27,8 @@ private:
 
 	int x;
 	int y;
-	int size;
 	int speed;
+	int size= 10;
 
 };
 

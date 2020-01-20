@@ -1,4 +1,1 @@
-
-
-cap the fire rate
-
+cap the fire rate using timers

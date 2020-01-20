@@ -27,6 +27,7 @@ Game::Game() {
 
 	//creates the ship object
 	player = Ship(screenHeight);
+	SetupEnemies();
 
 	running = true;;
 }
@@ -73,6 +74,25 @@ void Game::InitSystems() {
 	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 }
 
+//sets up enemies
+void Game::SetupEnemies() {
+
+	int rowCount = 4;
+	int columnCount = 5;
+
+	int verticalSpacing = 30;
+	int horizontalSpacing = screenWidth / columnCount;
+
+	//loops for each row of enemies
+	for (size_t i = 1; i < rowCount + 1; i++)
+
+		//loops for each column in the row
+		for (size_t j = 0; j < columnCount; j++)
+
+			//adds a new enemy to the vector
+			enemies.push_back(Enemy(-(screenWidth / 2) + (j * horizontalSpacing) + horizontalSpacing / 2, screenHeight / 2 - i * verticalSpacing));
+}
+
 //game loop
 void Game::GameLoop() {
 
@@ -105,7 +125,15 @@ void Game::Tick() {
 	//moves the ship
 	MoveShip();
 
+	//moves the projectiles
 	MoveProjectiles();
+
+	//moves the enemies
+	MoveEnemies();
+
+	//checks collision
+	CheckCollision();
+
 }
 
 //gets inputs from the user
@@ -173,13 +201,6 @@ void Game::ProcessInput() {
 
 				rightDown = false;
 				break;
-
-				//space bar
-				case SDLK_SPACE:
-
-				//causes the player to shoot
-				Shoot();
-				break;
 			}
 		}
 	}
@@ -203,6 +224,11 @@ void Game::Draw() {
 
 		playerProjectiles[i].Draw(screenWidth, screenHeight);
 
+	for (size_t i = 0; i < enemies.size(); i++)
+
+		enemies[i].Draw(screenWidth, screenHeight);
+
+
 	//swaps the buffer screen
 	SDL_GL_SwapWindow(window);
 }
@@ -211,7 +237,7 @@ void Game::Draw() {
 void Game::Shoot() {
 
 	//checks to see if therew as less than 5 projectiles
-	if (playerProjectiles.size() < 5)
+	if (playerProjectiles.size() < 400)
 
 		//adds a projectile to the end of the list
 		playerProjectiles.push_back(Projectile(player.x, player.y, ProjDirection::Up));
@@ -231,11 +257,11 @@ void Game::MoveShip() {
 
 	//checks to see if the left key was pressed
 	if (leftDown)
-		moveAmount -= 5;
+		moveAmount -= shipSpeed;
 
 	//checks to see if the right key was pressed
 	if (rightDown)
-		moveAmount += 5;
+		moveAmount += shipSpeed;
 
 	//checks to see if the player was within the bounds and if the player should be moved
 	if (player.WithinBounds(screenWidth, moveAmount) && moveAmount != 0)
@@ -262,7 +288,83 @@ void Game::MoveProjectiles() {
 			playerProjectiles.erase(playerProjectiles.begin() + i);
 }
 
-void Game::ChangeEnemyDirection() {
+//checks to see if the enemies direction should be changed
+void Game::CheckChangeEnemyDirection() {
+
+	bool change = false;
+
+	//loops through all the enemies
+	for (size_t i = 0; i < enemies.size(); i++)
+
+		//checks if the current enemy is outside the screen bounds
+		if (!enemies[i].WithinBounds(screenWidth, enemySpeed))
+
+			change = true;
 
 
+	if (change)
+
+		for (size_t i = 0; i < enemies.size(); i++)
+
+			enemies[i].ChangeDirection();
+}
+
+//moves all the enemies
+void Game::MoveEnemies() {
+
+	//tries to change direction
+	CheckChangeEnemyDirection();
+
+	//loops through the enemies
+	for (size_t i = 0; i < enemies.size(); i++)
+
+		//moves the current enemy
+		enemies[i].Move(enemySpeed);
+}
+
+//checks for collisions between projectiles and enemies
+void Game::CheckCollision() {
+
+	//checks to see if there were any projectiles
+	if (playerProjectiles.size() != 0) {
+
+		//loops through all the projectiles
+		for (size_t i = playerProjectiles.size() - 1; i >= 0; i--)
+		{
+
+			//checks to see if the projectile for loop went wrong
+			if (i > playerProjectiles.size() - 1) {
+
+				cout << "Projectile for loop went wrong i = " << i << endl;
+				break;
+			}
+			else {
+
+				//loops through all the enemies
+				for (size_t j = enemies.size() - 1; j >= 0; j--)
+				{
+
+					//checks to see if the for loop went wrong
+					if (j > enemies.size() - 1)
+					{
+						cout << "Enemy for loop went wrong j = " << j << endl;
+						//breaks out of the for loop
+						break;
+					}
+					else {
+
+						//checks for a collision
+						if (playerProjectiles[i].Collided(enemies[j].GetX(), enemies[j].GetY(), enemies[j].GetSize())) {
+
+							//removes the collided enemy
+							enemies.erase(enemies.begin() + j);
+
+							//removes the collided projectile
+							playerProjectiles.erase(playerProjectiles.begin() + i);
+						}
+					}
+				}
+			}
+		}
+	}
 }
